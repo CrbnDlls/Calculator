@@ -6,9 +6,32 @@ using System.Threading.Tasks;
 
 namespace Calculator
 {
-    public static class Calculator
+    public class Calculator
     {
-        public static double GetResult(double operand1, double operand2, Operation operation)
+        public double GetResult(IEnumerable<Command> commands)
+        { 
+            double result = double.NaN;
+            bool IsFirst = true;
+            Operation operation = Operation.No;
+            foreach (Command command in commands)
+            {
+                if (IsFirst)
+                {
+                    result = command.Value;
+                    operation = command.Operation;
+                    IsFirst = false;
+                    continue;
+                }
+
+                result = GetResult(result, command.Value, operation);
+                
+                operation = command.Operation;
+            }
+
+            return result;
+        }
+
+        private double GetResult(double operand1, double operand2, Operation operation)
         {
             double result = double.NaN;
             switch (operation)
@@ -35,6 +58,7 @@ namespace Calculator
         Add,
         Subtract,
         Multiply,
-        Divide
+        Divide,
+        No
     }
 }
